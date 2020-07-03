@@ -1,0 +1,13 @@
+Tarefas para o desenvolvimento do jogo Quebra-cabeças Deslizante:
+
+1) Fazer modelo para os estados do jogo (exs.: abertura, selecionando imagem (embaralhar), resolvendo, terminado)
+
+2) Pensar no código para o recorte das imagens nos quads de Löve
+
+3) Pensar no código para as tabelas que vão conter os elementos do jogo e o seu ordenamento (função comparação)
+
+4) Pensar como implementar a pontuação (incluindo marcadores de tempo e contador de movimentos)
+
+5) Pensar nos eventos: como ler os cliques válidos e como 'movimentar' os quads
+
+6) Registrar etapas do projeto e preparar apresentação
