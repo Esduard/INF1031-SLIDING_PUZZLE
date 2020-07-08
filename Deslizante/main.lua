@@ -4,6 +4,10 @@ local selecionando = false
 local resolvendo = false
 local terminado = false
 
+
+local tiles
+local dificuldade
+
 function love.load ()
     love.window.setMode (1000,1000)
     love.window.setTitle ("Deslize")
@@ -40,9 +44,30 @@ function love.mousepressed (x, y, bt)
         ...clique para escolha da dificuldade
         selecionando = false
         ...chamada da função para embaralhar
+        -- if coordenada for a do botao de dificuldade atribua a dificuldade
+        tiles = geraQuad(dificuldade)
+        --randomizar tiles
         resolvendo = true
         --]]
     end
+    
+    if resolvendo then
+    --[[ clique para deslizar tile
+    -- indice pode ser obtido pelo (x - deslocamento da tabela)/ tamanho de um tile e (y - deslocamento de tabela)/ tamanho de um tile
+    -- com indice obtido verifica se algum dos 4 vizinhos eh falso e troca de lugar
+    
+    --apos isso verifica se os tiles estao ordenados encerrando o game
+    ]]--
+    end
+  
+    if terminando then
+    --[[
+      fecha tela
+    
+    ]]--
+      
+    end
+    
 end
 
 function love.draw()
@@ -54,6 +79,25 @@ function love.draw()
   
   
   end
+
+
+  if resolvendo then
+  --[[
+  -- exibe tiles
+  
+  ]]--
+  
+  
+  
+  end
+  
+  if terminando then
+    --[[
+      mostra pontuacao
+    
+    ]]--
+      
+    end
 
 
 end
