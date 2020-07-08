@@ -8,6 +8,10 @@ function love.load ()
     love.window.setMode (1000,1000)
     love.window.setTitle ("Deslize")
     love.graphics.setBackgroundColor (0.95, 0.95, 0.95) -- quase branco
+    
+    love.graphics.newQuad()
+    
+    
     w, h = love.graphics.getDimensions ()
     math.randomseed (os.time())
 end
