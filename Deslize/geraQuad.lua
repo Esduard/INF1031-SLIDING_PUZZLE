@@ -1,9 +1,6 @@
 --recebe nivel de dificulade e retorna uma tabela de elementos [quad,index] onde quad é um fragmento da imagem e index é a sua ordem da imagem
 
 function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
-
-  --pega jpeg aleatorio de resolução 900x900
-  imagem = love.graphics.newImage("Cachorro.png")
   
   
   --define quantidade de tiles
@@ -19,7 +16,7 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
   for i=1, tiles do
     tile_atu = love.graphics.newQuad(x,y,tamanho,tamanho,900,900)
     
-    quadros[#quadros+1] = { index = i, quad = tile_atu}
+    quadros[#quadros+1] = { index = i, quad = tile_atu, visivel = true}
     
     if(x == 900 - tamanho) then --passar para proxima linha
       x = 0
@@ -30,6 +27,9 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
     
     
   end
+
+  --deixa o ultimo invisivel
+  quadros[#quadros].visivel = false
 
   return quadros
 end

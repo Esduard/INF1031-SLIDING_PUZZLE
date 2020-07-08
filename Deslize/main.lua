@@ -4,16 +4,47 @@ local selecionando = false
 local resolvendo = false
 local terminado = false
 
+local w
+local h
 
-local tiles
-local dificuldade
+
+local tiles -- tabela de tiles
+local dificuldade -- receba apena valores 3, 4 ou 5
+
+local tInicio
+local tFim
+
+function verificaNeigbor(indice)
+  
+  --verifica se tile esquerda esta vazia
+  if tiles[indice - 1].visivel == false and (indice - 1) % dificuldade ~= 0
+    return true
+  end
+  
+  --verifica se tile direita esta vazia
+  if tiles[indice + 1].visivel == false and indice % dificuldade ~= 0
+    return true
+  end
+  
+  --verifica se tile superior esta vazia
+  if tiles[indice - dificuldade].visivel == false and indice - dificuldade > 0
+    return true
+  end
+  
+  --verifica se tile inferior esta vazio
+  if tiles[indice + dificuldade].visivel == false and indice + dificuldade < (dificuldade * dificuldade)
+    return true
+  end
+
+end
 
 function love.load ()
     love.window.setMode (1000,1000)
     love.window.setTitle ("Deslize")
-    love.graphics.setBackgroundColor (0.95, 0.95, 0.95) -- quase branco
+    love.graphics.setBackgroundColor (1.0,1.0,1.0) -- quase branco
     
-    love.graphics.newQuad()
+    --definir imagem aleatoria do repositorio
+    love.graphics.newImage(" ")
     
     
     w, h = love.graphics.getDimensions ()
@@ -42,11 +73,14 @@ function love.mousepressed (x, y, bt)
     if selecionando then
         --[[
         ...clique para escolha da dificuldade
-        selecionando = false
         ...chamada da função para embaralhar
         -- if coordenada for a do botao de dificuldade atribua a dificuldade
+        selecionando = false
         tiles = geraQuad(dificuldade)
+        
         --randomizar tiles
+        --criar funcao que embaralha tiles
+        tInicio = love.timer.getTime()
         resolvendo = true
         --]]
     end
@@ -54,15 +88,34 @@ function love.mousepressed (x, y, bt)
     if resolvendo then
     --[[ clique para deslizar tile
     -- indice pode ser obtido pelo (x - deslocamento da tabela)/ tamanho de um tile e (y - deslocamento de tabela)/ tamanho de um tile
+    --gerar funcao indexToque que retorna indice de clique recebendo x e y
+    
     -- com indice obtido verifica se algum dos 4 vizinhos eh falso e troca de lugar
+    --funcao verificaNeigbor(dificuldade)
+    --se for um movimento valido conta um contador de movimentos
+    
     
     --apos isso verifica se os tiles estao ordenados encerrando o game
+    --define variavel i = 1
+    
+    {{3,Q3},{2,Q2},{1,Q1}}
+    
+    {{1,Q1},{2,Q2},{3,Q3}}
+    
+    if true then
+      resolvendo = false
+      tFim = love.timer.getTime()
+      terminado = true
+    end
     ]]--
     end
   
-    if terminando then
+    if terminado then
     --[[
-      fecha tela
+      exibe resultados
+      pontuação por tempo e qtd de movimentos
+      
+      botao para fechar a tela
     
     ]]--
       
@@ -84,17 +137,17 @@ function love.draw()
   if resolvendo then
   --[[
   -- exibe tiles
-  
+  -- exibe qtd de movimentos
   ]]--
   
   
   
   end
   
-  if terminando then
+  if terminado then
     --[[
-      mostra pontuacao
-    
+      mostra pontuacao  e tempo
+      quer reiniciar o jogo?
     ]]--
       
     end
@@ -104,9 +157,5 @@ end
 
 
 function love.update (dt)
-    if resolvendo then
-        --[[
-        ...função para verificar se jogo terminou, retorna resolvendo = false e terminado = true
-        --]]
-    end
+    
 end
