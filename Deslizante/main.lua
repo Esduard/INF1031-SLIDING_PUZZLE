@@ -29,7 +29,8 @@ end
 
 function love.mousepressed (x, y, bt)
     if bt ~= 1 then return -- verifica se é botão esquerdo
-    end 
+  end
+  
     if selecionando then
         --[[
         ...clique para escolha da dificuldade
@@ -39,6 +40,20 @@ function love.mousepressed (x, y, bt)
         --]]
     end
 end
+
+function love.draw()
+
+  if selecionando then
+  --desenha botoes
+  
+  
+  
+  
+  end
+
+
+end
+
 
 function love.update (dt)
     if resolvendo then

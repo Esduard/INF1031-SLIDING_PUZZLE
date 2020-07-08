@@ -22,7 +22,7 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
     quadros[#quadros+1] = { index = i, quad = tile_atu}
     
     if(x == 900 - tamanho) then --passar para proxima linha
-      x=0
+      x = 0
       y = tamanho + y
     else --siga pela linha
       x = tamanho + x
