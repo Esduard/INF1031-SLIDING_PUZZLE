@@ -14,6 +14,30 @@ local dificuldade -- receba apena valores 3, 4 ou 5
 local tInicio
 local tFim
 
+function verificaNeigbor(indice)
+  
+  --verifica se tile esquerda esta vazia
+  if tiles[indice - 1].visivel == false and (indice - 1) % dificuldade ~= 0
+    return true
+  end
+  
+  --verifica se tile direita esta vazia
+  if tiles[indice + 1].visivel == false and indice % dificuldade ~= 0
+    return true
+  end
+  
+  --verifica se tile superior esta vazia
+  if tiles[indice - dificuldade].visivel == false and indice - dificuldade > 0
+    return true
+  end
+  
+  --verifica se tile inferior esta vazio
+  if tiles[indice + dificuldade].visivel == false and indice + dificuldade < (dificuldade * dificuldade)
+    return true
+  end
+
+end
+
 function love.load ()
     love.window.setMode (1000,1000)
     love.window.setTitle ("Deslize")
