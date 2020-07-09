@@ -7,12 +7,16 @@ local selecionando = false
 local resolvendo = false
 local terminado = false
 
+local imagem = love.graphics.newImage("Cachorro.jpg")
+
 local w
 local h
 
 
 local tiles -- tabela de tiles
 local dificuldade -- receba apenas valores 3, 4 ou 5
+local tamanho_tile
+local qnt_tiles
 
 local tInicio
 local tFim
@@ -24,6 +28,10 @@ local botao_dificuldade
 local roman = love.graphics.newFont("timesbd.ttf",25)
 local descricao_dificuldade = love.graphics.newText(roman, "Escolha uma dificuldade")
 local nivel_dificuldade = love.graphics.newText(roman, " ")
+
+local molde_tabela_w = 559
+local molde_tabela_h = 558
+local escala = 0.621
 
 function verifica_vizinho(indice)
   
@@ -47,6 +55,22 @@ function verifica_vizinho(indice)
     return true
   end
 
+end
+
+function embaralha_tabela(t)
+    --[[
+    if (type(t) ~= "table") then
+        print ("ERRO: função shuffle_table() precisa receber uma tabela")
+        return false
+    end
+    ]]--
+    local j
+ 
+    for i = #t, 2, -1 do
+        j = math.random (i)
+        t[i], t[j] = t[j], t[i]
+    end
+    return t
 end
 
 function love.load ()
@@ -91,13 +115,13 @@ function verificaCliqueDificuldade (x,y)
     return -1
 end
 
-function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
+function geraQuad() --dificuldade pode ser 3, 4 ou 5
   
   
   --define quantidade de tiles
   qnt_tiles = dificuldade * dificuldade
   
-  tamanho = 900/dificuldade
+  tamanho_tile = 900/dificuldade
   
   local x = 0
   local y = 0
@@ -105,15 +129,15 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
   -- loop para definir os quads em referencia a resolução
   tiles = {}
   for i=1, qnt_tiles do
-    tile_atual = love.graphics.newQuad(x,y,tamanho,tamanho,900,900)
+    tile_atual = love.graphics.newQuad(x ,y,tamanho_tile,tamanho_tile ,900 ,900)
     
     tiles[#tiles+1] = { index = i, quad = tile_atual, visivel = true}
     
-    if(x == 900 - tamanho) then --passar para proxima linha
+    if(x == 900 - tamanho_tile) then --passar para proxima linha
       x = 0
-      y = tamanho + y
+      y = tamanho_tile + y
     else --siga pela linha
-      x = tamanho + x
+      x = tamanho_tile + x
     end
     
     
@@ -122,7 +146,7 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
   --deixa o ultimo invisivel
   tiles[#tiles].visivel = false
 
-  return
+  return tiles
 end
 
 function love.mousepressed (x, y, bt)
@@ -141,12 +165,14 @@ function love.mousepressed (x, y, bt)
         resolvendo = true
         --]]
         
-      local dificuldade = verificaCliqueDificuldade (x,y)
+      dificuldade = verificaCliqueDificuldade (x,y)
       
       if dificuldade == -1 then return 
       end
     
       tiles = geraQuad(dificuldade)
+      
+      tiles = embaralha_tabela(tiles)
       
       tInicio = love.timer.getTime()
       selecionando = false
@@ -176,6 +202,8 @@ function love.mousepressed (x, y, bt)
       terminado = true
     end
     ]]--
+    verifica_cliquePainel(x,y)
+    
     end
   
     if terminado then
@@ -189,6 +217,21 @@ function love.mousepressed (x, y, bt)
       
     end
     
+end
+
+function verifica_cliquePainel(x, y)
+    local borda_x = (w/2 - (molde_tabela_w/2)) -- colocar variável borda como local externa
+    local borda_y = (h/2 - (molde_tabela_h/2)) -- colocar variável borda como local externa
+    if x > borda_x and x < borda_x + molde_tabela_w and y > borda_y and y < borda_y + molde_tabela_h then --clicamos dentro do painel
+        local x = x - borda_x
+        local y = y - borda_y
+        local indice = math.ceil (x / (tamanho_tile * escala)) -- colcoar variável tamanho como local externa
+        indice = indice + (math.ceil (y / (tamanho_tile * escala)) - 1) * dificuldade
+        if indice > 0 and indice <= (dificuldade * dificuldade) then
+          return indice
+        end
+    end
+    return false
 end
 
 function love.draw(aviso_dificuldade)
@@ -221,24 +264,46 @@ function love.draw(aviso_dificuldade)
 
 
   if resolvendo then
-    local molde_tabela_w = 559
-    local molde_tabela_h = 558
-  --[[
-  -- exibe tiles
-  -- exibe qtd de movimentos
-  ]]--
-  love.graphics.draw(molde_tabela ,(w/2) - molde_tabela_w/2 ,h/2 - molde_tabela_h/2,0)
+    --[[
+    -- exibe tiles
+        x = 0 , y =0
+        --realiza um loop´pela lista de tiles
+        
+        {{3,Q3,true},{2,Q2,true},{1,Q1,true},{1,Q1,true},{1,Q1,true},{1,Q1,true},{1,Q1,true},{9,Q1,false},{1,Q1,true},}
+    
+    -- exibe qtd de movimentos
+    ]]--
   
+    love.graphics.setColor(1, 1, 1, 95)
+    love.graphics.draw(molde_tabela ,(w/2) - molde_tabela_w/2 ,h/2 - molde_tabela_h/2,0)
+    love.graphics.setColor(1, 1, 1, 1)
+  
+    local tile_index
+  
+    local x_exibe = w/2 - molde_tabela_w/2
+    local y_exibe = h/2 - molde_tabela_h/2
+    for tile_index = 1, qnt_tiles do
+      print('cehguei')
+      if tiles[tile_index].visivel then
+        love.graphics.draw(imagem,tiles[tile_index].quad ,x_exibe ,y_exibe,0,escala,escala)
+      end
+        if tile_index % dificuldade == 0 then --passar para proxima linha
+          x_exibe = w/2 - molde_tabela_w/2
+          y_exibe = tamanho_tile * escala + y_exibe
+        else --siga pela linha
+          x_exibe = tamanho_tile * escala + x_exibe
+        end
+      
+    end
   
   end
   
   if terminado then
     --[[
       mostra pontuacao  e tempo
-      quer reiniciar o jogo?
     ]]--
       
-    end
+  end
 
 
 end
