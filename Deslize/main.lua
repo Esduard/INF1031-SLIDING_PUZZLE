@@ -39,13 +39,13 @@ function verificaNeigbor(indice)
 end
 
 function love.load ()
-    love.window.setMode (1000,1000)
+    love.window.setMode (1280,720)
     love.window.setTitle ("Deslize")
     love.graphics.setBackgroundColor (1.0,1.0,1.0) -- quase branco
     
-    --definir imagem aleatoria do repositorio
-    aviso_dificuldade = love.graphics.newImage("..\\Assets7.png")
-    botao_dificuldade = love.graphics.newImage("..\\Assets5.png")
+    --definir imagens
+    aviso_dificuldade = love.graphics.newImage("7.png")
+    botao_dificuldade = love.graphics.newImage("5.png")
     
     
     w, h = love.graphics.getDimensions ()
@@ -53,7 +53,7 @@ function love.load ()
 end
 
 function love.keypressed (key)
-    if key == 'enter' then
+    if key == 'return' then
         if abertura then
             abertura = false
             selecionando = true
@@ -128,7 +128,7 @@ function love.draw(aviso_dificuldade)
 
   if selecionando then
     --desenha botoes
-    love.graphics.draw(aviso_dificuldade,(love.window.getWidth()/2) - aviso_dificuldade.getWidth()/2,(love.window.getHeighth()/2) - aviso_dificuldade.getHeight()/2)
+    love.graphics.draw(aviso_dificuldade,w/2,h/2,0,0.5,0.5)
   
   
   
