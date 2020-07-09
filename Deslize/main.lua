@@ -17,22 +17,22 @@ local tFim
 function verificaNeigbor(indice)
   
   --verifica se tile esquerda esta vazia
-  if tiles[indice - 1].visivel == false and (indice - 1) % dificuldade ~= 0
+  if tiles[indice - 1].visivel == false and (indice - 1) % dificuldade ~= 0 then
     return true
   end
   
   --verifica se tile direita esta vazia
-  if tiles[indice + 1].visivel == false and indice % dificuldade ~= 0
+  if tiles[indice + 1].visivel == false and indice % dificuldade ~= 0 then
     return true
   end
   
   --verifica se tile superior esta vazia
-  if tiles[indice - dificuldade].visivel == false and indice - dificuldade > 0
+  if tiles[indice - dificuldade].visivel == false and indice - dificuldade > 0 then
     return true
   end
   
   --verifica se tile inferior esta vazio
-  if tiles[indice + dificuldade].visivel == false and indice + dificuldade < (dificuldade * dificuldade)
+  if tiles[indice + dificuldade].visivel == false and indice + dificuldade < (dificuldade * dificuldade) then
     return true
   end
 
@@ -44,7 +44,8 @@ function love.load ()
     love.graphics.setBackgroundColor (1.0,1.0,1.0) -- quase branco
     
     --definir imagem aleatoria do repositorio
-    love.graphics.newImage(" ")
+    aviso_dificuldade = love.graphics.newImage("..\\Assets7.png")
+    botao_dificuldade = love.graphics.newImage("..\\Assets5.png")
     
     
     w, h = love.graphics.getDimensions ()
@@ -123,11 +124,11 @@ function love.mousepressed (x, y, bt)
     
 end
 
-function love.draw()
+function love.draw(aviso_dificuldade)
 
   if selecionando then
-  --desenha botoes
-  
+    --desenha botoes
+    love.graphics.draw(aviso_dificuldade,(love.window.getWidth()/2) - aviso_dificuldade.getWidth()/2,(love.window.getHeighth()/2) - aviso_dificuldade.getHeight()/2)
   
   
   
