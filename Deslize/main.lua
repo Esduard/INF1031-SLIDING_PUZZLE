@@ -1,4 +1,4 @@
---importacoes
+math.randomseed (os.time())
 
 
 -- definindo estados do jogo
@@ -7,7 +7,9 @@ local selecionando = false
 local resolvendo = false
 local terminado = false
 
-local imagem = love.graphics.newImage("Cachorro.jpg")
+local i_foto = math.random(4)
+
+local imagem = love.graphics.newImage("Fotos/" .. i_foto .. ".jpg")
 
 local w
 local h
@@ -20,6 +22,7 @@ local qnt_tiles
 
 local tInicio
 local tFim
+local resultado
 
 local aviso_dificuldade
 local botao_dificuldade
@@ -33,27 +36,39 @@ local molde_tabela_w = 559
 local molde_tabela_h = 558
 local escala = 0.621
 
-function verifica_vizinho(indice)
+function troca_vizinho(indice)
   
   --verifica se tile esquerda esta vazia
-  if tiles[indice - 1].visivel == false and (indice - 1) % dificuldade ~= 0 then
-    return true
+  if (indice - 1) % dificuldade ~= 0 then
+    if tiles[indice - 1].visivel == false then
+      tiles[indice], tiles[indice - 1] = tiles[indice - 1], tiles[indice]
+    end
   end
+  
   
   --verifica se tile direita esta vazia
-  if tiles[indice + 1].visivel == false and indice % dificuldade ~= 0 then
-    return true
+  if indice % dificuldade ~= 0 then
+    if tiles[indice + 1].visivel == false then
+      tiles[indice], tiles[indice + 1] = tiles[indice + 1], tiles[indice]
+    end
   end
+  
   
   --verifica se tile superior esta vazia
-  if tiles[indice - dificuldade].visivel == false and indice - dificuldade > 0 then
-    return true
+  if indice - dificuldade > 0 then
+    if tiles[indice - dificuldade].visivel == false then
+      tiles[indice], tiles[indice - dificuldade] = tiles[indice - dificuldade], tiles[indice]
+    end
   end
   
+  
   --verifica se tile inferior esta vazio
-  if tiles[indice + dificuldade].visivel == false and indice + dificuldade <= (dificuldade * dificuldade) then
-    return true
+  if indice + dificuldade <= (dificuldade * dificuldade) then
+    if tiles[indice + dificuldade].visivel == false then
+      tiles[indice], tiles[indice + dificuldade] = tiles[indice + dificuldade], tiles[indice]
+    end
   end
+  
 
 end
 
@@ -80,7 +95,6 @@ function love.load ()
     
     
     w, h = love.graphics.getDimensions ()
-    math.randomseed (os.time())
 end
 
 function love.keypressed (key)
@@ -95,6 +109,33 @@ function love.keypressed (key)
     end
     if key == 'r' then
         love.event.quit('restart')
+    end
+    
+    if key == 'k' then -- modo teste
+      if selecionando then
+        
+      dificuldade = 2
+      
+      tiles = geraQuad(dificuldade)
+      
+      tiles = embaralha_tabela(tiles)
+      
+      tInicio = love.timer.getTime()
+      selecionando = false
+      resolvendo = true
+      end
+        
+    end
+    
+    if key == 'y' then
+    
+      if resolvendo then
+        resolvendo = false
+        tFim = love.timer.getTime()
+        resultado = tFim - tInicio
+        terminado = true
+      end
+    
     end
 end
 
@@ -149,6 +190,18 @@ function geraQuad() --dificuldade pode ser 3, 4 ou 5
   return tiles
 end
 
+function verificaVitoria()
+  local i = 1
+  
+  for i=1, qnt_tiles do
+    if tiles[i].index ~= i then
+      return false
+    end
+  end
+
+  return true
+end
+
 function love.mousepressed (x, y, bt)
     if bt ~= 1 then return -- verifica se é botão esquerdo
   end
@@ -180,29 +233,40 @@ function love.mousepressed (x, y, bt)
     end
     
     if resolvendo then
-    --[[ clique para deslizar tile
-    -- indice pode ser obtido pelo (x - deslocamento da tabela)/ tamanho de um tile e (y - deslocamento de tabela)/ tamanho de um tile
-    --gerar funcao indexToque que retorna indice de clique recebendo x e y
+      --[[ clique para deslizar tile
+      -- indice pode ser obtido pelo (x - deslocamento da tabela)/ tamanho de um tile e (y - deslocamento de tabela)/ tamanho de um tile
+      --gerar funcao indexToque que retorna indice de clique recebendo x e y
+      
+      -- com indice obtido verifica se algum dos 4 vizinhos eh falso e troca de lugar
+      --funcao verificaNeigbor(dificuldade)
+      --se for um movimento valido conta um contador de movimentos
+      
+      
+      --apos isso verifica se os tiles estao ordenados encerrando o game
+      --define variavel i = 1
+      
+      {{3,Q3},{2,Q2},{1,Q1}}
+      
+      {{1,Q1},{2,Q2},{3,Q3}}
+      
+      if true then
+        resolvendo = false
+        tFim = love.timer.getTime()
+        terminado = true
+      end
+      ]]--
+      local movimentar = verifica_cliquePainel(x,y)
+      if movimentar == -1 then return
+      end
     
-    -- com indice obtido verifica se algum dos 4 vizinhos eh falso e troca de lugar
-    --funcao verificaNeigbor(dificuldade)
-    --se for um movimento valido conta um contador de movimentos
+      troca_vizinho(movimentar)
     
-    
-    --apos isso verifica se os tiles estao ordenados encerrando o game
-    --define variavel i = 1
-    
-    {{3,Q3},{2,Q2},{1,Q1}}
-    
-    {{1,Q1},{2,Q2},{3,Q3}}
-    
-    if true then
-      resolvendo = false
-      tFim = love.timer.getTime()
-      terminado = true
-    end
-    ]]--
-    verifica_cliquePainel(x,y)
+      if verificaVitoria() then
+        resolvendo = false
+        tFim = love.timer.getTime()
+        resultado = tFim - tInicio
+        terminado = true
+      end
     
     end
   
@@ -214,6 +278,8 @@ function love.mousepressed (x, y, bt)
       botao para fechar a tela
     
     ]]--
+    
+    
       
     end
     
@@ -231,14 +297,14 @@ function verifica_cliquePainel(x, y)
           return indice
         end
     end
-    return false
+    return -1
 end
 
 function love.draw(aviso_dificuldade)
 
-  aviso_dificuldade = love.graphics.newImage("7.png")
-  botao_dificuldade = love.graphics.newImage("5.png")
-  molde_tabela = love.graphics.newImage("4.png")
+  aviso_dificuldade = love.graphics.newImage("Assets/7.png")
+  botao_dificuldade = love.graphics.newImage("Assets/5.png")
+  molde_tabela = love.graphics.newImage("Assets/4.png")
 
   if selecionando then
     --desenha aviso
@@ -274,8 +340,8 @@ function love.draw(aviso_dificuldade)
     -- exibe qtd de movimentos
     ]]--
   
-    love.graphics.setColor(1, 1, 1, 95)
-    love.graphics.draw(molde_tabela ,(w/2) - molde_tabela_w/2 ,h/2 - molde_tabela_h/2,0)
+    love.graphics.setColor(1, 1, 1, 0.5)
+    love.graphics.draw(imagem ,(w/2) - molde_tabela_w/2 ,h/2 - molde_tabela_h/2,0,escala)
     love.graphics.setColor(1, 1, 1, 1)
   
     local tile_index
@@ -283,7 +349,6 @@ function love.draw(aviso_dificuldade)
     local x_exibe = w/2 - molde_tabela_w/2
     local y_exibe = h/2 - molde_tabela_h/2
     for tile_index = 1, qnt_tiles do
-      print('cehguei')
       if tiles[tile_index].visivel then
         love.graphics.draw(imagem,tiles[tile_index].quad ,x_exibe ,y_exibe,0,escala,escala)
       end
@@ -302,6 +367,8 @@ function love.draw(aviso_dificuldade)
     --[[
       mostra pontuacao  e tempo
     ]]--
+    love.graphics.setColor(0,0,0)
+    love.graphics.print("voce resolveu em "..math.ceil(resultado).. " segundos",w/2, h/2)
       
   end
 
