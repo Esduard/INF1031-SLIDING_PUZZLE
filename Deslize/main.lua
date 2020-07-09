@@ -12,7 +12,7 @@ local h
 
 
 local tiles -- tabela de tiles
-local dificuldade -- receba apena valores 3, 4 ou 5
+local dificuldade -- receba apenas valores 3, 4 ou 5
 
 local tInicio
 local tFim
@@ -25,7 +25,7 @@ local roman = love.graphics.newFont("timesbd.ttf",25)
 local descricao_dificuldade = love.graphics.newText(roman, "Escolha uma dificuldade")
 local nivel_dificuldade = love.graphics.newText(roman, " ")
 
-function verificaNeigbor(indice)
+function verifica_vizinho(indice)
   
   --verifica se tile esquerda esta vazia
   if tiles[indice - 1].visivel == false and (indice - 1) % dificuldade ~= 0 then
@@ -43,7 +43,7 @@ function verificaNeigbor(indice)
   end
   
   --verifica se tile inferior esta vazio
-  if tiles[indice + dificuldade].visivel == false and indice + dificuldade < (dificuldade * dificuldade) then
+  if tiles[indice + dificuldade].visivel == false and indice + dificuldade <= (dificuldade * dificuldade) then
     return true
   end
 
@@ -95,7 +95,7 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
   
   
   --define quantidade de tiles
-  tiles = dificuldade * dificuldade
+  qnt_tiles = dificuldade * dificuldade
   
   tamanho = 900/dificuldade
   
@@ -103,11 +103,11 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
   local y = 0
   
   -- loop para definir os quads em referencia a resolução
-  local quadros = {}
-  for i=1, tiles do
-    tile_atu = love.graphics.newQuad(x,y,tamanho,tamanho,900,900)
+  tiles = {}
+  for i=1, qnt_tiles do
+    tile_atual = love.graphics.newQuad(x,y,tamanho,tamanho,900,900)
     
-    quadros[#quadros+1] = { index = i, quad = tile_atu, visivel = true}
+    tiles[#tiles+1] = { index = i, quad = tile_atual, visivel = true}
     
     if(x == 900 - tamanho) then --passar para proxima linha
       x = 0
@@ -120,9 +120,9 @@ function geraQuad(dificuldade) --dificuldade pode ser 3, 4 ou 5
   end
 
   --deixa o ultimo invisivel
-  quadros[#quadros].visivel = false
+  tiles[#tiles].visivel = false
 
-  return quadros
+  return
 end
 
 function love.mousepressed (x, y, bt)
@@ -137,7 +137,6 @@ function love.mousepressed (x, y, bt)
         selecionando = false
         tiles = geraQuad(dificuldade)
         --randomizar tiles
-        --criar funcao que embaralha tiles
         tInicio = love.timer.getTime()
         resolvendo = true
         --]]
