@@ -298,9 +298,11 @@ function love.draw() --tirei o parâmetro daqui
     end
 
     if resolvendo then
+
+        love.graphics.setColor(1, 1, 1, 0.2)
         love.graphics.draw(imagem, (w/2) - molde_tabela_w/2, h/2 - molde_tabela_h/2, 0, escala)
-        love.graphics.setColor(1, 1, 1, 0.5)
-  
+        love.graphics.setColor(1, 1, 1, 1)
+        
         local tile_index
   
         local x_exibe = w/2 - molde_tabela_w/2
