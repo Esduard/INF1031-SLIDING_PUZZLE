@@ -23,7 +23,7 @@ local qnt_tiles
 -- calculando placar de acordo com tempo e número de movimentos
 local tInicio
 local tFim
-local resultado
+local duracao
 local movimentos = 0
 local pontuacao
 
@@ -40,10 +40,11 @@ local molde_tabela_h = 558
 local escala = 0.621
 
 local tela_inicial
+local tela_final
 
 function troca_vizinho(indice)
 
-    --verifica se tile esquerda está vazia
+    -- verifica se tile esquerda está vazia
     if (indice - 1) % dificuldade ~= 0 then
         if tiles[indice - 1].visivel == false then
             tiles[indice], tiles[indice - 1] = tiles[indice - 1], tiles[indice]
@@ -51,7 +52,7 @@ function troca_vizinho(indice)
         end
     end
 
-    --verifica se tile direita está vazia
+    -- verifica se tile direita está vazia
     if indice % dificuldade ~= 0 then
         if tiles[indice + 1].visivel == false then
             tiles[indice], tiles[indice + 1] = tiles[indice + 1], tiles[indice]
@@ -59,7 +60,7 @@ function troca_vizinho(indice)
         end
     end
 
-  --verifica se tile superior está vazia
+    -- verifica se tile superior está vazia
     if indice - dificuldade > 0 then
         if tiles[indice - dificuldade].visivel == false then
             tiles[indice], tiles[indice - dificuldade] = tiles[indice - dificuldade], tiles[indice]
@@ -67,7 +68,7 @@ function troca_vizinho(indice)
         end
     end
 
-    --verifica se tile inferior está vazia
+    -- verifica se tile inferior está vazia
     if indice + dificuldade <= (dificuldade * dificuldade) then
         if tiles[indice + dificuldade].visivel == false then
             tiles[indice], tiles[indice + dificuldade] = tiles[indice + dificuldade], tiles[indice]
@@ -98,10 +99,13 @@ function love.load ()
     
     w, h = love.graphics.getDimensions ()
     
-    aviso_dificuldade = love.graphics.newImage("Assets/7.png")
-    botao_dificuldade = love.graphics.newImage("Assets/5.png")
+    aviso_dificuldade = love.graphics.newImage("Assets/Escolha.png")
+    botao_dificuldade = love.graphics.newImage("Assets/Botao_Dificuldade.png")
     molde_tabela = love.graphics.newImage("Assets/4.png") -- deixamos de usar?
     tela_inicial = love.graphics.newImage("Assets/Abertura.jpg")
+    tela_final = love.graphics.newImage("Assets/Final.jpg")
+    
+    stencil = love.graphics.newFont("Assets/STENCIL.TTF", 30)
 
 end
 
@@ -137,8 +141,9 @@ function love.keypressed (key)
       if resolvendo then
         resolvendo = false
         tFim = love.timer.getTime()
-        resultado = tFim - tInicio
+        duracao = tFim - tInicio
         terminado = true
+        pontuacao = 0
       end
     end
     
@@ -150,20 +155,20 @@ function verifica_clique_dificuldade (x,y)
     local button_w = 2388 * 0.125
     local button_h = 578 * 0.125
     for dificuldade = 3, 5, 1 do
-      --verifica se coordenadas do mouse tocaram em algum botao
+      -- verifica se coordenadas do mouse tocaram em algum botao
         if x > (w/2) - offset and x < (w/2) - offset + button_w and y > h/2 and y < h/2 + button_h then
             return dificuldade
         end
     offset = offset - 300
     end
 
-    --se nao achar retorna -1
+    -- se nao achar retorna -1
     return -1
 end
 
-function gera_quads() --dificuldade pode ser 3, 4 ou 5
+function gera_quads() -- dificuldade pode ser 3, 4 ou 5
   
-    --define quantidade de tiles
+    -- define quantidade de tiles
     qnt_tiles = dificuldade * dificuldade
   
     tamanho_tile = 900/dificuldade
@@ -178,23 +183,22 @@ function gera_quads() --dificuldade pode ser 3, 4 ou 5
     
         tiles[#tiles+1] = {index = i, quad = tile_atual, visivel = true}
     
-        if x == (900 - tamanho_tile) then --passar para proxima linha
+        if x == (900 - tamanho_tile) then -- passar para próxima linha
             x = 0
             y = tamanho_tile + y
-        else --siga pela linha
+        else -- siga pela linha
             x = tamanho_tile + x
         end
     end
 
-    --deixa o ultimo invisivel
+    -- deixa o ultimo invisível
     tiles[#tiles].visivel = false
 
     return tiles
 end
 
 function verifica_vitoria()
-    local i = 1
-  
+      
     for i=1, qnt_tiles do
         if tiles[i].index ~= i then
             return false
@@ -236,33 +240,23 @@ function love.mousepressed (x, y, bt)
         if verifica_vitoria() then
             resolvendo = false
             tFim = love.timer.getTime()
-            resultado = tFim - tInicio
-            pontuacao = 200 * dificuldade - movimentos - resultado
+            duracao = tFim - tInicio
+            pontuacao = math.ceil(200 * dificuldade - movimentos - duracao)
             terminado = true
         end
     
-    end
-  
-    if terminado then
-    --[[
-      exibe resultados
-      pontuação por tempo e qtd de movimentos
-      
-      botao para fechar a tela
-    
-    ]]--
-          
     end
     
 end
 
 function verifica_clique_painel(x, y)
-    local borda_x = (w/2 - (molde_tabela_w/2)) -- colocar variável borda como local externa
-    local borda_y = (h/2 - (molde_tabela_h/2)) -- colocar variável borda como local externa
-    if x > borda_x and x < borda_x + molde_tabela_w and y > borda_y and y < borda_y + molde_tabela_h then --clicamos dentro do painel
+    local borda_x = (w/2 - (molde_tabela_w/2))
+    local borda_y = (h/2 - (molde_tabela_h/2))
+    -- confere se o clique foi dentro do painel
+    if x > borda_x and x < borda_x + molde_tabela_w and y > borda_y and y < borda_y + molde_tabela_h then
         local x = x - borda_x
         local y = y - borda_y
-        local indice = math.ceil (x / (tamanho_tile * escala)) -- colcoar variável tamanho como local externa
+        local indice = math.ceil (x / (tamanho_tile * escala))
         indice = indice + (math.ceil (y / (tamanho_tile * escala)) - 1) * dificuldade
         if indice > 0 and indice <= (dificuldade * dificuldade) then
           return indice
@@ -271,38 +265,45 @@ function verifica_clique_painel(x, y)
     return -1
 end
 
-function love.draw() --tirei o parâmetro daqui
+function love.draw() -- tirei o parâmetro daqui
     
     if abertura then
-    
         love.graphics.draw(tela_inicial, 0, 0, 0, 1, 1)
-    
     end
     
 
     if selecionando then
-        --desenha aviso
-        love.graphics.draw(aviso_dificuldade,(w/2) - 150 ,h/2 - 300,0,0.125,0.125)
+        -- tela de fundo
+        love.graphics.draw(tela_final, 0, 0, 0, 1, 1)
+        
+        -- desenha aviso
+        love.graphics.draw(aviso_dificuldade, (w/2) - 150, h/2 - 300, 0, 0.125, 0.125)
         love.graphics.setColor (0.0 , 0.0 , 0.0)
-        love.graphics.draw(descricao_dificuldade,(w/2) - 140 ,h/2 - 290,0)
+        love.graphics.draw(descricao_dificuldade, (w/2) - 137, h/2 - 280, 0)
         love.graphics.setColor (1.0 , 1.0 , 1.0)
       
-        --desenha botoes
+        -- desenha botoes
         local dificuldade
         local offset = 450
         for dificuldade = 3, 5 do
-            love.graphics.draw(botao_dificuldade,(w/2) - offset,h/2 ,0,0.125,0.125)
+            love.graphics.draw(botao_dificuldade, (w/2) - offset, h/2, 0, 0.125, 0.125)
             local s = string.format("%d", (dificuldade))
             nivel_dificuldade:set(s)
-            love.graphics.setColor (0.0 , 0.0 , 0.0)
-            love.graphics.draw(nivel_dificuldade,(w/2) - offset + 150,h/2 + 10 ,0)
-            love.graphics.setColor (1.0 , 1.0 , 1.0)
+            love.graphics.setColor (0.0, 0.0, 0.0)
+            love.graphics.draw(nivel_dificuldade,(w/2) - offset + 140, h/2 + 20, 0)
+            love.graphics.setColor (1.0, 1.0, 1.0)
             offset = offset - 300
         end
     end
 
     if resolvendo then
-
+        
+        -- tela de fundo
+        love.graphics.draw(tela_final, 0, 0, 0, 1, 1)
+        love.graphics.setColor (1, 1, 1, 1)
+        -- base branca para transparência
+        love.graphics.rectangle('fill', (w/2) - molde_tabela_w/2, h/2 - molde_tabela_h/2, 900 * escala, 900 * escala)
+        -- transparência da tile vazia
         love.graphics.setColor(1, 1, 1, 0.2)
         love.graphics.draw(imagem, (w/2) - molde_tabela_w/2, h/2 - molde_tabela_h/2, 0, escala)
         love.graphics.setColor(1, 1, 1, 1)
@@ -326,9 +327,18 @@ function love.draw() --tirei o parâmetro daqui
     end
   
     if terminado then
-        love.graphics.setColor(0,0,0)
-        love.graphics.print("voce resolveu em "..math.ceil(resultado).. " segundos, e em "..movimentos.. " movimentos", w/2, h/2)
-        love.graphics.print("sua pontuação foi "..pontuacao, w/2, h/2 + 20)
+        
+        -- tela de fundo
+        love.graphics.setColor(1,1,1)
+        love.graphics.draw(tela_final, 0, 0, 0, 1, 1)
+   
+        -- textos da tela final
+        local texto_terminou = love.graphics.newText(stencil, "Terminou em "..math.ceil(duracao).. " segundos e "..movimentos.. " movimentos")
+        love.graphics.draw(texto_terminou, w/2 - 550, h/2 + 140)
+        local texto_pontuacao = love.graphics.newText(stencil, "Sua pontuação foi "..pontuacao)
+        love.graphics.draw(texto_pontuacao, w/2 - 550, h/2 + 200)
+        local texto_rejogar = love.graphics.newText(stencil, "Pressione 'r' para reiniciar")
+        love.graphics.draw(texto_rejogar, w/2 - 550, h/2 + 260)
     end
   
 end
