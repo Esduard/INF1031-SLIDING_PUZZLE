@@ -11,3 +11,13 @@ Tarefas para o desenvolvimento do jogo Quebra-cabeças Deslizante:
 5) Pensar nos eventos: como ler os cliques válidos e como 'movimentar' os quads
 
 6) Registrar etapas do projeto e preparar apresentação
+
+
+Apresentação, slides:
+
+1 a 3 - Ruffles
+4 - Eduardo
+5 - Motta
+6 - Ruffles
+7 - Gabriel
+8 e 9 - Eduardo
