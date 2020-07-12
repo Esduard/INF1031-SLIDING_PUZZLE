@@ -39,6 +39,8 @@ local molde_tabela_w = 559
 local molde_tabela_h = 558
 local escala = 0.621
 
+local tela_inicial
+
 function troca_vizinho(indice)
 
     --verifica se tile esquerda está vazia
@@ -89,11 +91,18 @@ function embaralha_tabela(t)
 end
 
 function love.load ()
+    
     love.window.setMode (1280,720)
     love.window.setTitle ("Deslize!")
     love.graphics.setBackgroundColor (1.0,1.0,1.0)
     
     w, h = love.graphics.getDimensions ()
+    
+    aviso_dificuldade = love.graphics.newImage("Assets/7.png")
+    botao_dificuldade = love.graphics.newImage("Assets/5.png")
+    molde_tabela = love.graphics.newImage("Assets/4.png") -- deixamos de usar?
+    tela_inicial = love.graphics.newImage("Assets/Abertura.jpg")
+
 end
 
 function love.keypressed (key)
@@ -263,12 +272,7 @@ function verifica_clique_painel(x, y)
 end
 
 function love.draw() --tirei o parâmetro daqui
-
-    aviso_dificuldade = love.graphics.newImage("Assets/7.png")
-    botao_dificuldade = love.graphics.newImage("Assets/5.png")
-    molde_tabela = love.graphics.newImage("Assets/4.png") -- deixamos de usar?
-    tela_inicial = love.graphics.newImage("Assets/Abertura.jpg")
-
+    
     if abertura then
     
         love.graphics.draw(tela_inicial, 0, 0, 0, 1, 1)
