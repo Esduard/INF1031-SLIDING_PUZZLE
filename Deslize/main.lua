@@ -262,11 +262,19 @@ function verifica_clique_painel(x, y)
     return -1
 end
 
-function love.draw(aviso_dificuldade)
+function love.draw() --tirei o parâmetro daqui
 
     aviso_dificuldade = love.graphics.newImage("Assets/7.png")
     botao_dificuldade = love.graphics.newImage("Assets/5.png")
     molde_tabela = love.graphics.newImage("Assets/4.png") -- deixamos de usar?
+    tela_inicial = love.graphics.newImage("Assets/Abertura.jpg")
+
+    if abertura then
+    
+        love.graphics.draw(tela_inicial, 0, 0, 0, 1, 1)
+    
+    end
+    
 
     if selecionando then
         --desenha aviso
