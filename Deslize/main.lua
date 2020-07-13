@@ -112,26 +112,38 @@ function embaralha_tabela(t)
     
     for i = 1, #t-1 do              -- para cada peça da tabela, exceto a última
         if t[i].index ~= #t then    -- se o index dessa peça for diferente da quantidade de tiles
-            local contador = 1
-            for j = i, #t-1 do      -- para essa peça, repetindo um número de vezes igual à quantidade total de tiles
-                if t[i].index > t[i+contador].index then
+            for contador = i, #t do      -- para essa peça, repetindo um número de vezes igual à quantidade total de tiles
+                if t[i].index > t[contador].index then
                     inversoes = inversoes + 1
                 end
-                contador = contador + 1
             end
         end
     end
     
-    --print(inversoes) -- testando valores
+    --algoritimo explicando a solucao na bibliografia
+    if dificuldade % 2 == 0 then
+      for i = 1, #t do
+        if t[i].visivel == false then
+          if(math.ceil(i/ dificuldade) % 2 == 1 and inversoes % 2 == 1) then
+            return t
+          elseif (math.ceil(i/ dificuldade) % 2 == 0 and inversoes % 2 == 0) then
+            return t
+          else
+            t = embaralha_tabela(t)
+            return t
+          end
+        end
+      end
     
-    -- se não for par, repete recursivamente
-    if inversoes % 2 == 0 then
-        return t
-    else
-        t = embaralha_tabela(t)
-        return t
+    else -- If the grid width is odd, then the number of inversions in a solvable situation is even.
+      if inversoes % 2 == 0 then
+          return t
+      else
+          t = embaralha_tabela(t)
+          return t
+      end
     end
-
+    
 end
 
 
