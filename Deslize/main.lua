@@ -42,6 +42,26 @@ local escala = 0.621
 local tela_inicial
 local tela_final
 
+
+function love.load ()
+    
+    love.window.setMode (1280,720)
+    love.window.setTitle ("Deslize!")
+    love.graphics.setBackgroundColor (1.0,1.0,1.0)
+    
+    w, h = love.graphics.getDimensions ()
+    
+    aviso_dificuldade = love.graphics.newImage("Assets/Escolha.png")
+    botao_dificuldade = love.graphics.newImage("Assets/Botao_Dificuldade.png")
+    molde_tabela = love.graphics.newImage("Assets/4.png") -- deixamos de usar?
+    tela_inicial = love.graphics.newImage("Assets/Abertura.jpg")
+    tela_final = love.graphics.newImage("Assets/Final.jpg")
+    
+    stencil = love.graphics.newFont("Assets/STENCIL.TTF", 30)
+
+end
+
+
 function troca_vizinho(indice)
 
     -- verifica se tile esquerda está vazia
@@ -87,27 +107,33 @@ function embaralha_tabela(t)
         t[i], t[j] = t[j], t[i]
     end
     
-    return t
+    -- confere se é solúvel
+    local inversoes = 0
     
+    for i = 1, #t-1 do              -- para cada peça da tabela, exceto a última
+        if t[i].index ~= #t then    -- se o index dessa peça for diferente da quantidade de tiles
+            local contador = 1
+            for j = i, #t-1 do      -- para essa peça, repetindo um número de vezes igual à quantidade total de tiles
+                if t[i].index > t[i+contador].index then
+                    inversoes = inversoes + 1
+                end
+                contador = contador + 1
+            end
+        end
+    end
+    
+    --print(inversoes) -- testando valores
+    
+    -- se não for par, repete recursivamente
+    if inversoes % 2 == 0 then
+        return t
+    else
+        t = embaralha_tabela(t)
+        return t
+    end
+
 end
 
-function love.load ()
-    
-    love.window.setMode (1280,720)
-    love.window.setTitle ("Deslize!")
-    love.graphics.setBackgroundColor (1.0,1.0,1.0)
-    
-    w, h = love.graphics.getDimensions ()
-    
-    aviso_dificuldade = love.graphics.newImage("Assets/Escolha.png")
-    botao_dificuldade = love.graphics.newImage("Assets/Botao_Dificuldade.png")
-    molde_tabela = love.graphics.newImage("Assets/4.png") -- deixamos de usar?
-    tela_inicial = love.graphics.newImage("Assets/Abertura.jpg")
-    tela_final = love.graphics.newImage("Assets/Final.jpg")
-    
-    stencil = love.graphics.newFont("Assets/STENCIL.TTF", 30)
-
-end
 
 function love.keypressed (key)
     
@@ -241,7 +267,7 @@ function love.mousepressed (x, y, bt)
             resolvendo = false
             tFim = love.timer.getTime()
             duracao = tFim - tInicio
-            pontuacao = math.ceil(200 * dificuldade - movimentos - duracao)
+            pontuacao = math.ceil(300 * dificuldade - movimentos - duracao)
             terminado = true
         end
     
@@ -341,9 +367,4 @@ function love.draw() -- tirei o parâmetro daqui
         love.graphics.draw(texto_rejogar, w/2 - 550, h/2 + 260)
     end
   
-end
-
-
-function love.update (dt)
-    
 end
