@@ -120,7 +120,7 @@ function embaralha_tabela(t)
         end
     end
     
-    --algoritimo explicando a solucao na bibliografia
+    -- o algoritmo explicando a solução está citado nas referências da apresentação
     if dificuldade % 2 == 0 then
       for i = 1, #t do
         if t[i].visivel == false then
@@ -279,7 +279,10 @@ function love.mousepressed (x, y, bt)
             resolvendo = false
             tFim = love.timer.getTime()
             duracao = tFim - tInicio
-            pontuacao = math.ceil(300 * dificuldade - movimentos - duracao)
+            pontuacao = 300 * dificuldade - movimentos - math.ceil(duracao)
+            if pontuacao < 0 then
+                pontuacao = 0
+            end
             terminado = true
         end
     
@@ -370,13 +373,16 @@ function love.draw() -- tirei o parâmetro daqui
         love.graphics.setColor(1,1,1)
         love.graphics.draw(tela_final, 0, 0, 0, 1, 1)
    
+        -- imagem concluída
+        love.graphics.draw(imagem, (w/2) - molde_tabela_w/2, h/2 - molde_tabela_h/2, 0, escala)
+   
         -- textos da tela final
-        local texto_terminou = love.graphics.newText(stencil, "Terminou em "..math.ceil(duracao).. " segundos e "..movimentos.. " movimentos")
-        love.graphics.draw(texto_terminou, w/2 - 550, h/2 + 140)
+        local texto_terminou = love.graphics.newText(stencil, "Terminou usando \n"..math.ceil(duracao).. " segundos \ne "..movimentos.. " movimentos \n\n\nSua pontuação foi "..pontuacao)
+        love.graphics.draw(texto_terminou, w/2 - 600, h/2 + 155)
         local texto_pontuacao = love.graphics.newText(stencil, "Sua pontuação foi "..pontuacao)
-        love.graphics.draw(texto_pontuacao, w/2 - 550, h/2 + 200)
-        local texto_rejogar = love.graphics.newText(stencil, "Pressione 'r' para reiniciar")
-        love.graphics.draw(texto_rejogar, w/2 - 550, h/2 + 260)
+        --love.graphics.draw(texto_pontuacao, w/2 - 550, h/2 + 200)
+        local texto_rejogar = love.graphics.newText(stencil, "\n\n\nPressione 'r' para reiniciar")
+        love.graphics.draw(texto_rejogar, w/2 + 160, h/2 + 215)
     end
   
 end
